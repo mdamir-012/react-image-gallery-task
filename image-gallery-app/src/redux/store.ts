@@ -1,10 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { ImageState } from '../types';
-import imageReducer from './reducers/imageReducer.ts';
-
-export interface RootState {
-  images: ImageState;
-}
+import imageReducer from './reducers/imageReducer';
 
 export const store = configureStore({
   reducer: {
@@ -12,4 +7,5 @@ export const store = configureStore({
   },
 });
 
+export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch; 

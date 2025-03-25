@@ -1,52 +1,39 @@
-import { ImageActionTypes, ImageState } from '../../types';
-import {
-  ADD_IMAGE,
-  CLEAR_IMAGES,
-  REMOVE_IMAGE,
-  SET_ERROR,
-  SET_LOADING
-} from '../actions/imageActions.ts';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Image } from '../../types';
+
+interface ImageState {
+  images: Image[];
+  loading: boolean;
+  error: string | null;
+}
 
 const initialState: ImageState = {
   images: [],
   loading: false,
-  error: null
+  error: null,
 };
 
-const imageReducer = (state: ImageState = initialState, action: ImageActionTypes): ImageState => {
-  switch (action.type) {
-    case ADD_IMAGE:
-      if (state.images.some(img => img.id === action.payload.id)) {
-        return state;
-      }
-      return {
-        ...state,
-        images: [...state.images, action.payload],
-        error: null
-      };
-    case REMOVE_IMAGE:
-      return {
-        ...state,
-        images: state.images.filter(image => image.id !== action.payload)
-      };
-    case SET_LOADING:
-      return {
-        ...state,
-        loading: action.payload
-      };
-    case SET_ERROR:
-      return {
-        ...state,
-        error: action.payload
-      };
-    case CLEAR_IMAGES:
-      return {
-        ...state,
-        images: []
-      };
-    default:
-      return state;
-  }
-};
+const imageSlice = createSlice({
+  name: 'images',
+  initialState,
+  reducers: {
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+    },
+    addImage: (state, action: PayloadAction<Image>) => {
+      state.images.push(action.payload);
+    },
+    removeImage: (state, action: PayloadAction<string>) => {
+      state.images = state.images.filter(image => image.id !== action.payload);
+    },
+    clearImages: (state) => {
+      state.images = [];
+    },
+  },
+});
 
-export default imageReducer; 
+export const { setLoading, setError, addImage, removeImage, clearImages } = imageSlice.actions;
+export default imageSlice.reducer; 

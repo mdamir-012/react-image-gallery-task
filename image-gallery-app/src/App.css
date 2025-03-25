@@ -1,21 +1,21 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 32px;
   text-align: center;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 96px;
+  padding: 24px;
   will-change: filter;
   transition: filter 300ms;
 }
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 32px #646cffaa);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 32px #61dafbaa);
 }
 
 @keyframes logo-spin {
@@ -34,9 +34,166 @@
 }
 
 .card {
-  padding: 2em;
+  padding: 32px;
 }
 
 .read-the-docs {
   color: #888;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--background-color);
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.dark .app-nav {
+  background-color: #1a1a1a;
+  border-bottom-color: #333;
+}
+
+.nav-left {
+  display: flex;
+  gap: 16px;
+}
+
+.nav-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--text-color);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.dark .nav-button {
+  color: #aaa;
+}
+
+.nav-button:hover {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.dark .nav-button:hover {
+  background-color: #333;
+  color: white;
+}
+
+.nav-button.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.settings-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark .settings-button {
+  color: #aaa;
+}
+
+.settings-button:hover {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.dark .settings-button:hover {
+  background-color: #333;
+  color: white;
+}
+
+.app-main {
+  flex: 1;
+  padding: 16px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  background-color: #fff;
+}
+
+.dark .app-main {
+  background-color: #121212;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #root {
+    padding: 8px;
+  }
+
+  .app-nav {
+    padding: 12px;
+  }
+
+  .nav-left {
+    gap: 8px;
+  }
+
+  .nav-button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .settings-button {
+    padding: 6px;
+  }
+
+  .app-main {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  #root {
+    padding: 0;
+  }
+
+  .app-nav {
+    padding: 8px;
+  }
+
+  .nav-left {
+    gap: 4px;
+  }
+
+  .nav-button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .settings-button {
+    padding: 6px;
+  }
+
+  .app-main {
+    padding: 8px;
+  }
 }
