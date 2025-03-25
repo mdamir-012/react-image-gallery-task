@@ -73,30 +73,30 @@ A modern web-based image gallery application built with React, TypeScript, and t
 ## 📦 Installation & Setup
 
 1. **Clone the repository**
-   \`\`\`bash
+   ```
    git clone https://github.com/mdamir-012/react-image-gallery-task.git
    cd react-image-gallery-task
-   \`\`\`
+   ```
 
 2. **Install dependencies**
-   \`\`\`bash
+   ```
    npm install
-   \`\`\`
+   ```
 
 3. **Start development server**
-   \`\`\`bash
+   ```
    npm run dev
-   \`\`\`
-   The application will be available at \`http://localhost:5173\`
+   ```
+   The application will be available at `http://localhost:5173`
 
 4. **Build for production**
-   \`\`\`bash
+   ```
    npm run build
-   \`\`\`
+   ```
 
 ## 🗂️ Project Structure
 
-\`\`\`
+```
 src/
 ├── components/          # Reusable React components
 │   ├── ImageCard/      # Image display component
@@ -121,25 +121,25 @@ src/
 ├── styles/            # Global styles
 ├── types/             # TypeScript definitions
 └── utils/             # Utility functions
-\`\`\`
+```
 
 ## 🧪 Testing
 
 ### Running Tests
 1. **All tests**
-   \`\`\`bash
+   ```
    npm test
-   \`\`\`
+   ```
 
 2. **Watch mode**
-   \`\`\`bash
+   ```
    npm run test:watch
-   \`\`\`
+   ```
 
 3. **Coverage report**
-   \`\`\`bash
+   ```
    npm run test:coverage
-   \`\`\`
+   ```
 
 
 
@@ -160,26 +160,26 @@ src/
 ## 🔄 API Integration
 
 ### NASA Image and Video Library API
-- Base URL: \`https://images-api.nasa.gov\`
+- Base URL: `https://images-api.nasa.gov`
 - Rate Limits: 1000 requests per hour
 - Authentication: Not required
 
 ### Endpoints Used
 1. **Search Images**
-   - \`GET /search\`
+   - `GET /search`
    - Parameters:
-     - \`q\`: Search query
-     - \`media_type\`: Filter by media type
-     - \`year_start\`: Filter by year
-     - \`page\`: Pagination
-     - \`page_size\`: Results per page
+     - `q`: Search query
+     - `media_type`: Filter by media type
+     - `year_start`: Filter by year
+     - `page`: Pagination
+     - `page_size`: Results per page
 
 2. **Get Asset Details**
-   - \`GET /asset/{nasa_id}\`
+   - `GET /asset/{nasa_id}`
    - Returns high-resolution image URLs
 
 3. **Get Metadata**
-   - \`GET /metadata/{nasa_id}\`
+   - `GET /metadata/{nasa_id}`
    - Returns detailed image information
 
 ## 🎨 Customization Options
@@ -253,9 +253,18 @@ src/
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create feature branch: \`git checkout -b feature/NewFeature\`
-3. Commit changes: \`git commit -m 'Add NewFeature'\`
-4. Push to branch: \`git push origin feature/NewFeature\`
+2. Create feature branch:
+   ```
+   git checkout -b feature/NewFeature
+   ```
+3. Commit changes:
+   ```
+   git commit -m 'Add NewFeature'
+   ```
+4. Push to branch:
+   ```
+   git push origin feature/NewFeature
+   ```
 5. Submit a Pull Request
 
 ### Contribution Guidelines
