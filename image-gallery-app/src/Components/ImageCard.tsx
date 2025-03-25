@@ -16,6 +16,11 @@ const ImageCard: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [showAddImageModal, setShowAddImageModal] = useState<boolean>(false);
+  const [filters, setFilters] = useState({
+    year: '',
+    mediaType: '',
+    center: ''
+  });
   const [newImage, setNewImage] = useState<AddImageFormData>({
     title: '',
     description: '',
@@ -24,10 +29,39 @@ const ImageCard: React.FC = () => {
   });
   const imagesPerPage = 20;
 
+  // NASA centers for filtering
+  const nasaCenters = [
+    'JPL', 'Johnson Space Center', 'Kennedy Space Center', 'Goddard Space Flight Center',
+    'Marshall Space Flight Center', 'Ames Research Center', 'Langley Research Center',
+    'Glenn Research Center', 'Dryden Flight Research Center', 'Stennis Space Center'
+  ];
+
+  // Media types for filtering
+  const mediaTypes = ['image', 'video', 'audio'];
+
+  // Filter images based on search query and filters
+  const filteredImages = images.filter((image) => {
+    const matchesSearch = image.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         image.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesYear = !filters.year || image.date.startsWith(filters.year);
+    const matchesMediaType = !filters.mediaType || image.media_type === filters.mediaType;
+    const matchesCenter = !filters.center || image.center === filters.center;
+    
+    return matchesSearch && matchesYear && matchesMediaType && matchesCenter;
+  });
+
   const getData = async (page: number = 1): Promise<void> => {
     try {
       dispatch(setLoading(true));
-      const response = await fetch(`https://images-api.nasa.gov/search?media_type=image&page_size=${imagesPerPage}&page=${page}`);
+      let apiUrl = `https://images-api.nasa.gov/search?media_type=image&page_size=${imagesPerPage}&page=${page}`;
+      
+      // Add filters to API URL if they are set
+      if (filters.year) apiUrl += `&year_start=${filters.year}`;
+      if (filters.mediaType) apiUrl += `&media_type=${filters.mediaType}`;
+      if (filters.center) apiUrl += `&center=${encodeURIComponent(filters.center)}`;
+
+      const response = await fetch(apiUrl);
       const data: NasaImageResponse = await response.json();
       
       if (data.collection && data.collection.items) {
@@ -38,7 +72,9 @@ const ImageCard: React.FC = () => {
             title: item.data[0].title,
             description: item.data[0].description || 'No description available',
             date: item.data[0].date_created,
-            url: imageUrl
+            url: imageUrl,
+            media_type: item.data[0].media_type,
+            center: item.data[0].center
           };
         }));
         setNasaImages(formattedImages);
@@ -60,7 +96,7 @@ const ImageCard: React.FC = () => {
 
   useEffect(() => {
     getData(currentPage);
-  }, [currentPage]);
+  }, [currentPage, filters]);
 
   const handleAddImage = (e: React.FormEvent): void => {
     e.preventDefault();
@@ -92,55 +128,112 @@ const ImageCard: React.FC = () => {
   const handleSearch = (e: React.FormEvent): void => {
     e.preventDefault();
     setCurrentPage(1);
-   
+    getData(1);
   };
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    setCurrentPage(1);
+  };
+
+  // Get unique years from images for the year filter
+  const uniqueYears = Array.from(new Set(images.map(image => image.date.substring(0, 4)))).sort().reverse();
 
   return (
     <div className="image-gallery-container">
       <div className="hero-section">
         <div className="container mx-auto px-4 py-12">
-          <div className="flex justify-between items-center mb-8">
+          <div className="text-center mb-8">
             <h1 className="hero-title">NASA Image Gallery</h1>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setShowAddImageModal(true)}
-                className="add-image-button"
-              >
+            <button
+              onClick={() => setShowAddImageModal(true)}
+              className="add-image-button"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Add Image
+            </button>
+          </div>
+          <div className="flex items-center gap-4 mb-4">
+            <button
+              onClick={toggleTheme}
+              className="theme-toggle-button"
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                Add Image
-              </button>
-              <button
-                onClick={toggleTheme}
-                className="theme-toggle-button"
-                aria-label="Toggle theme"
-              >
-                {isDarkMode ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                  </svg>
-                )}
-              </button>
-            </div>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
           </div>
           <div className="search-container">
-            <form onSubmit={handleSearch} className="relative">
-              <input
-                type="text"
-                placeholder="Search NASA images..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-              <button type="submit" className="search-button">
-                Search
-              </button>
+            <form onSubmit={handleSearch} className="search-form">
+              <div className="search-input-container">
+                <input
+                  type="text"
+                  placeholder="Search NASA images..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                />
+                <button type="submit" className="search-button">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </button>
+              </div>
             </form>
+            <div className="filter-container">
+              <select
+                name="year"
+                value={filters.year}
+                onChange={handleFilterChange}
+                className="filter-select"
+              >
+                <option value="">All Years</option>
+                {uniqueYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+              <select
+                name="mediaType"
+                value={filters.mediaType}
+                onChange={handleFilterChange}
+                className="filter-select"
+              >
+                <option value="">All Media Types</option>
+                {mediaTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </option>
+                ))}
+              </select>
+              <select
+                name="center"
+                value={filters.center}
+                onChange={handleFilterChange}
+                className="filter-select"
+              >
+                <option value="">All Centers</option>
+                {nasaCenters.map((center) => (
+                  <option key={center} value={center}>
+                    {center}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -159,7 +252,7 @@ const ImageCard: React.FC = () => {
         )}
 
         <div className="image-grid">
-          {images.map((image) => (
+          {filteredImages.map((image) => (
             <div 
               key={image.id} 
               className="image-card"
@@ -242,42 +335,52 @@ const ImageCard: React.FC = () => {
       {showAddImageModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <div className="p-4">
-              <h2 className="text-xl font-semibold mb-4">Add New Image</h2>
-              <form onSubmit={handleAddImage} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Image URL</label>
+            <div className="modal-header">
+              <h2 className="modal-title">Add New Image</h2>
+              <button
+                onClick={() => setShowAddImageModal(false)}
+                className="modal-close-button"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handleAddImage} className="space-y-6">
+                <div className="form-group">
+                  <label className="form-label">Image URL</label>
                   <input
                     type="url"
                     value={newImage.url}
                     onChange={(e) => setNewImage({ ...newImage, url: e.target.value })}
-                    className="modal-input"
+                    className="form-input"
                     required
                     placeholder="Enter image URL"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Title</label>
+                <div className="form-group">
+                  <label className="form-label">Title</label>
                   <input
                     type="text"
                     value={newImage.title}
                     onChange={(e) => setNewImage({ ...newImage, title: e.target.value })}
-                    className="modal-input"
+                    className="form-input"
                     required
                     placeholder="Enter image title"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Description</label>
+                <div className="form-group">
+                  <label className="form-label">Description</label>
                   <textarea
                     value={newImage.description}
                     onChange={(e) => setNewImage({ ...newImage, description: e.target.value })}
-                    className="modal-input"
-                    rows={3}
+                    className="form-input"
+                    rows={4}
                     placeholder="Enter image description"
                   />
                 </div>
-                <div className="flex justify-end gap-2">
+                <div className="modal-footer">
                   <button
                     type="button"
                     onClick={() => setShowAddImageModal(false)}

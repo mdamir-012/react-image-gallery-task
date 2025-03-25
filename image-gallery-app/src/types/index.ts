@@ -4,6 +4,12 @@ export interface Image {
   description: string;
   date: string;
   url: string;
+  media_type?: string;
+  center?: string;
+  keywords?: string[];
+  nasa_id?: string;
+  photographer?: string;
+  location?: string;
 }
 
 export interface ImageState {
