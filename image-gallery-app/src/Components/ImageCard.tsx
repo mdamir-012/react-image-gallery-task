@@ -20,6 +20,7 @@ const ImageCard: React.FC = () => {
   const [showAddImageModal, setShowAddImageModal] = useState<boolean>(false);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [, setIsFullscreen] = useState<boolean>(false);
+  const [copySuccess, setCopySuccess] = useState<string>('');
   const [filters, setFilters] = useState({
     year: '',
     mediaType: '',
@@ -113,16 +114,16 @@ const ImageCard: React.FC = () => {
       if (!selectedImage) return;
 
       let newIndex: number;
-      switch (e.key) {
-        case 'ArrowLeft':
+      switch (e.key.toLowerCase()) {
+        case 'arrowleft':
           newIndex = images.findIndex(img => img.id === selectedImage.id) - 1;
           if (newIndex >= 0) setSelectedImage(images[newIndex]);
           break;
-        case 'ArrowRight':
+        case 'arrowright':
           newIndex = images.findIndex(img => img.id === selectedImage.id) + 1;
           if (newIndex < images.length) setSelectedImage(images[newIndex]);
           break;
-        case 'Escape':
+        case 'escape':
           setSelectedImage(null);
           setIsFullscreen(false);
           break;
@@ -134,6 +135,16 @@ const ImageCard: React.FC = () => {
           break;
         case 'f':
           toggleFullscreen();
+          break;
+        case 'c':
+          if (selectedImage) {
+            handleCopyImage(selectedImage.url);
+          }
+          break;
+        case 'u':
+          if (selectedImage) {
+            handleCopyUrl(selectedImage.url);
+          }
           break;
         default:
           break;
@@ -201,6 +212,34 @@ const ImageCard: React.FC = () => {
 
 
   const uniqueYears = Array.from(new Set(images.map(image => image.date.substring(0, 4)))).sort().reverse();
+
+  const handleCopyUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopySuccess('URL copied!');
+      setTimeout(() => setCopySuccess(''), 2000);
+    } catch (err) {
+      console.error('Failed to copy URL:', err);
+      setCopySuccess('Failed to copy');
+    }
+  };
+
+  const handleCopyImage = async (url: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [blob.type]: blob
+        })
+      ]);
+      setCopySuccess('Image copied!');
+      setTimeout(() => setCopySuccess(''), 2000);
+    } catch (err) {
+      console.error('Failed to copy image:', err);
+      setCopySuccess('Failed to copy');
+    }
+  };
 
   return (
     <div className="image-gallery-container">
@@ -342,15 +381,41 @@ const ImageCard: React.FC = () => {
                     <p className="card-description">{image.description}</p>
                     <div className="card-footer">
                       <span className="date-text">{new Date(image.date).toLocaleDateString()}</span>
-                      <button
-                        onClick={() => handleRemoveImage(image.id)}
-                        className="remove-button"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="remove-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
+                      <div className="card-actions">
+                        <button
+                          onClick={() => handleCopyUrl(image.url)}
+                          className="action-button"
+                          title="Copy image URL"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleCopyImage(image.url)}
+                          className="action-button"
+                          title="Copy image to clipboard"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleRemoveImage(image.id)}
+                          className="action-button remove-button"
+                          title="Remove image"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="remove-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
+                    {copySuccess && (
+                      <div className="copy-success-message">
+                        {copySuccess}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

@@ -31,6 +31,8 @@ export interface NasaImageResponse {
         title: string;
         description: string;
         date_created: string;
+        media_type: string;
+        center: string;
       }>;
       links: Array<{
         href: string;

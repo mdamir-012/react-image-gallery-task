@@ -14,6 +14,9 @@
   --button-bg: #3b82f6;
   --button-hover: #2563eb;
   --button-disabled: #93c5fd;
+  --success-bg: #4caf50;
+  --success-text: #ffffff;
+  --button-hover-bg: rgba(0, 0, 0, 0.05);
 }
 
 /* Dark Mode Styles */
@@ -31,6 +34,9 @@
   --button-bg: #3b82f6;
   --button-hover: #2563eb;
   --button-disabled: #1e40af;
+  --success-bg: #43a047;
+  --success-text: #ffffff;
+  --button-hover-bg: rgba(255, 255, 255, 0.1);
 }
 
 /* Base Styles */
@@ -1000,4 +1006,73 @@
 
 :fullscreen .image-card {
   transform: scale(1) !important;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-button {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-button:hover {
+  background-color: var(--button-hover-bg);
+}
+
+.action-button svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--text-secondary);
+  transition: stroke 0.2s ease;
+}
+
+.action-button:hover svg {
+  stroke: var(--text-primary);
+}
+
+.remove-button svg {
+  stroke: var(--error-color);
+}
+
+.copy-success-message {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: fadeInOut 2s ease-in-out;
+  z-index: 1000;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
 }
