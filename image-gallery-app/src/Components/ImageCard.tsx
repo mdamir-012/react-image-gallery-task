@@ -20,7 +20,7 @@ const ImageCard: React.FC = () => {
   const [showAddImageModal, setShowAddImageModal] = useState<boolean>(false);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [, setIsFullscreen] = useState<boolean>(false);
-  const [copySuccess, setCopySuccess] = useState<string>('');
+  const [copySuccessMap, setCopySuccessMap] = useState<{ [key: string]: string }>({});
   const [filters, setFilters] = useState({
     year: '',
     mediaType: '',
@@ -138,12 +138,12 @@ const ImageCard: React.FC = () => {
           break;
         case 'c':
           if (selectedImage) {
-            handleCopyImage(selectedImage.url);
+            handleCopyImage(selectedImage.url, selectedImage.id);
           }
           break;
         case 'u':
           if (selectedImage) {
-            handleCopyUrl(selectedImage.url);
+            handleCopyUrl(selectedImage.url, selectedImage.id);
           }
           break;
         default:
@@ -213,31 +213,37 @@ const ImageCard: React.FC = () => {
 
   const uniqueYears = Array.from(new Set(images.map(image => image.date.substring(0, 4)))).sort().reverse();
 
-  const handleCopyUrl = async (url: string) => {
+  const handleCopyUrl = async (url: string, imageId: string) => {
     try {
       await navigator.clipboard.writeText(url);
-      setCopySuccess('URL copied!');
-      setTimeout(() => setCopySuccess(''), 2000);
+      setCopySuccessMap(prev => ({ ...prev, [imageId]: 'URL copied!' }));
+      setTimeout(() => {
+        setCopySuccessMap(prev => {
+          const newMap = { ...prev };
+          delete newMap[imageId];
+          return newMap;
+        });
+      }, 2000);
     } catch (err) {
       console.error('Failed to copy URL:', err);
-      setCopySuccess('Failed to copy');
+      setCopySuccessMap(prev => ({ ...prev, [imageId]: 'Failed to copy' }));
     }
   };
 
-  const handleCopyImage = async (url: string) => {
+  const handleCopyImage = async (url: string, imageId: string) => {
     try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          [blob.type]: blob
-        })
-      ]);
-      setCopySuccess('Image copied!');
-      setTimeout(() => setCopySuccess(''), 2000);
-    } catch (err) {
-      console.error('Failed to copy image:', err);
-      setCopySuccess('Failed to copy');
+      await navigator.clipboard.writeText(url);
+      setCopySuccessMap(prev => ({ ...prev, [imageId]: 'Image URL copied to clipboard!' }));
+      setTimeout(() => {
+        setCopySuccessMap(prev => {
+          const newMap = { ...prev };
+          delete newMap[imageId];
+          return newMap;
+        });
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to copy image URL:', error);
+      setCopySuccessMap(prev => ({ ...prev, [imageId]: 'Failed to copy image. Please try copying the URL instead.' }));
     }
   };
 
@@ -383,21 +389,41 @@ const ImageCard: React.FC = () => {
                       <span className="date-text">{new Date(image.date).toLocaleDateString()}</span>
                       <div className="card-actions">
                         <button
-                          onClick={() => handleCopyUrl(image.url)}
                           className="action-button"
+                          onClick={() => handleCopyImage(image.url, image.id)}
                           title="Copy image URL"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
+                            />
                           </svg>
                         </button>
                         <button
-                          onClick={() => handleCopyImage(image.url)}
                           className="action-button"
-                          title="Copy image to clipboard"
+                          onClick={() => handleCopyUrl(image.url, image.id)}
+                          title="Copy image URL"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+                            />
                           </svg>
                         </button>
                         <button
@@ -405,15 +431,25 @@ const ImageCard: React.FC = () => {
                           className="action-button remove-button"
                           title="Remove image"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="remove-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                            />
                           </svg>
                         </button>
                       </div>
                     </div>
-                    {copySuccess && (
+                    {copySuccessMap[image.id] && (
                       <div className="copy-success-message">
-                        {copySuccess}
+                        {copySuccessMap[image.id]}
                       </div>
                     )}
                   </div>

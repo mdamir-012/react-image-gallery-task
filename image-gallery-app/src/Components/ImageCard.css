@@ -194,8 +194,8 @@
 .image-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  padding: 2rem 0;
+  gap: 32px;
+  padding: 32px 0;
 }
 
 .image-card {
@@ -298,19 +298,51 @@
   display: block;
 }
 
-.remove-button {
+.card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.action-button {
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.action-button:hover {
+  background-color: var(--button-hover-bg);
+  color: var(--text-primary);
+}
+
+.action-button svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  transition: stroke 0.2s ease;
+}
+
+.remove-button {
   background-color: #ef4444;
   color: white;
-  padding: 8px 16px;
+  padding: 8px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 14px;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
 }
 
 .remove-button:hover {
@@ -318,9 +350,10 @@
   transform: translateY(-1px);
 }
 
-.remove-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+.remove-button svg {
+  width: 20px;
+  height: 20px;
+  stroke: white;
 }
 
 /* Modal Styles */
@@ -529,15 +562,15 @@
 
 .empty-state-title {
   color: var(--text-primary);
-  font-size: 1.25rem;
+  font-size: 20px;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
   transition: color 0.3s ease;
 }
 
 .empty-state-text {
   color: var(--text-secondary);
-  font-size: 1rem;
+  font-size: 16px;
   transition: color 0.3s ease;
 }
 
@@ -546,16 +579,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
-  margin-top: 2rem;
-  padding: 1rem;
+  gap: 24px;
+  margin-top: 32px;
+  padding: 16px;
 }
 
 .pagination-button {
   background-color: var(--button-bg);
   color: white;
-  padding: 0.5rem 1.5rem;
-  border-radius: 0.5rem;
+  padding: 8px 24px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: 500;
@@ -587,13 +620,13 @@
 .collections-button {
   background-color: var(--button-bg);
   color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
+  padding: 12px 24px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: 500;
   transition: all 0.2s ease;
-  margin-bottom: 1.5rem;
+  margin-bottom: 24px;
   box-shadow: var(--card-shadow);
 }
 
@@ -604,22 +637,22 @@
 
 .collections-container {
   background-color: var(--card-bg);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
+  border-radius: 12px;
+  padding: 24px;
   box-shadow: var(--card-shadow);
 }
 
 .collections-form {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .collection-input {
   flex: 1;
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
+  border-radius: 8px;
   background-color: var(--input-bg);
   color: var(--text-primary);
   outline: none;
@@ -634,8 +667,8 @@
 .collection-submit-button {
   background-color: var(--button-bg);
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  padding: 8px 16px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: 500;
@@ -651,8 +684,8 @@
 .theme-toggle-button {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
-  padding: 0.75rem;
-  border-radius: 0.75rem;
+  padding: 12px;
+  border-radius: 12px;
   border: 1px solid var(--border-color);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -661,8 +694,8 @@
   justify-content: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
+  top: 24px;
+  right: 24px;
   z-index: 100;
 }
 
@@ -674,8 +707,8 @@
 }
 
 .theme-toggle-button svg {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 24px;
+  height: 24px;
   color: var(--text-primary);
   transition: color 0.3s ease;
 }
@@ -700,17 +733,17 @@
 .add-image-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
+  gap: 8px;
+  padding: 12px 24px;
   background-color: var(--button-bg);
   color: white;
   border: none;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  margin-bottom: 2rem;
+  margin-bottom: 32px;
 }
 
 .add-image-button:hover {
@@ -720,10 +753,10 @@
 
 .modal-input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 8px;
   border: 1px solid #e5e7eb;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
+  border-radius: 6px;
+  font-size: 14px;
   transition: border-color 0.2s ease;
 }
 
@@ -736,12 +769,12 @@
 .modal-submit-button {
   background-color: #10b981;
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
+  padding: 8px 16px;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -753,12 +786,12 @@
 .modal-cancel-button {
   background-color: #e5e7eb;
   color: #374151;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
+  padding: 8px 16px;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 0.875rem;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -790,20 +823,20 @@
 
 .filter-container {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 16px;
+  margin-top: 16px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .filter-select,
 .filter-input {
-  padding: 0.5rem 1rem;
+  padding: 8px 16px;
   border: 1px solid var(--border-color);
-  border-radius: 0.375rem;
+  border-radius: 6px;
   background-color: var(--input-bg);
   color: var(--text-primary);
-  font-size: 0.875rem;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
   min-width: 150px;
@@ -976,7 +1009,7 @@
 
 .shortcuts-modal h3 {
   margin: 0 0 15px 0;
-  font-size: 1.1em;
+  font-size: 18px;
 }
 
 .shortcuts-modal ul {
@@ -987,7 +1020,7 @@
 
 .shortcuts-modal li {
   margin: 8px 0;
-  font-size: 0.9em;
+  font-size: 14px;
 }
 
 /* Image Card Zoom Transition */
@@ -1006,43 +1039,6 @@
 
 :fullscreen .image-card {
   transform: scale(1) !important;
-}
-
-.card-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.action-button {
-  background: transparent;
-  border: none;
-  padding: 6px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.action-button:hover {
-  background-color: var(--button-hover-bg);
-}
-
-.action-button svg {
-  width: 20px;
-  height: 20px;
-  stroke: var(--text-secondary);
-  transition: stroke 0.2s ease;
-}
-
-.action-button:hover svg {
-  stroke: var(--text-primary);
-}
-
-.remove-button svg {
-  stroke: var(--error-color);
 }
 
 .copy-success-message {
