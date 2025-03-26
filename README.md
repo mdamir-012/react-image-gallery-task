@@ -278,6 +278,6 @@ src/
 
 - NASA for providing the Image and Video Library API
 - React and TypeScript communities
-- Contributors and testers
+
 
 
